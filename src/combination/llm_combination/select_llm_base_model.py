@@ -1,6 +1,6 @@
 from .hf_model import HF_MODEL_URLS, HFModel
 from .openai_model import OPENAI_MODELS, OpenAIModel
-from src.tools import get_default_device
+from src.tools.tools import get_default_device
 
 def get_model(model_name, gpu_id=0):
     """Load / intialise the model and return it"""
