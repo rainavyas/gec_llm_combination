@@ -24,7 +24,8 @@ class SelectionLLMCombiner(BaseLLMCombiner):
         BaseLLMCombiner.__init__(self, *args, **kwargs)
 
     def _prep_prompts(self, source_sentences, pred_texts):
-        prompts = [self._prompt(s, ps) for s,ps in zip(source_sentences, pred_texts)]
+        preds = list(zip(*pred_texts))
+        prompts = [self._prompt(s, ps) for s,ps in zip(source_sentences, preds)]
         return prompts
     
     def _prompt(self, source, preds):
