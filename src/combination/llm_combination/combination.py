@@ -35,12 +35,13 @@ class SelectionLLMCombiner(BaseLLMCombiner):
     
     def _prompt(self, source, preds):
         out = (
-            "Select an output sentence option that is the best for grammatical error correction"
-            "of an input sentence. Select only one output sentence option from \{1,2,3\} and return only the option number.\n"
+            "Select an output sentence option that is the best for grammatical error correction "
+            "of an input sentence. Select only one output sentence option from {1,2,3} and return only the option number. Do not give an explanation.\n"
             f"Input: {source}\n"
         )
         for i, pred in enumerate(preds):
-            out += f"<option{i+1}: {pred}\n"
+            out += f"<option {i+1}: {pred}\n"
         out += f"\n\n"
+        out+='The best option number is: '
         return out
 
