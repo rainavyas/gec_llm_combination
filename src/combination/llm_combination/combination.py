@@ -38,7 +38,7 @@ class SelectionLLMCombiner(BaseLLMCombiner):
             source = ' '.join(source.split(' ')[1:])
         out = (
             "Select the best output sentence option for grammatical error correction "
-            "of the given input sentence. Select only one output sentence option from {1,2,3} and return only the option number in the following format <option>{1/2/3}</option>.\n"
+            "of the given input sentence. Select only one output sentence option from {1,2,3} and return only the option number in the following format <option>1/2/3</option>.\n"
             f"Input: {source}\n"
         )
         for i, pred in enumerate(preds):
@@ -46,6 +46,6 @@ class SelectionLLMCombiner(BaseLLMCombiner):
                 pred = ' '.join(pred.split(' ')[1:])
             out += f"option {i+1}: {pred}\n"
         out += f"\n\n"
-        out += 'Make sure you return the selected option number in the format <option>{1/2/3}</option> and give no explanation.'
+        out += 'Make sure you return the best option number in the format <option>1/2/3</option> and give no explanation.'
         return out
 
