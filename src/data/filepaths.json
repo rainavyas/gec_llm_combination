@@ -1,19 +1,14 @@
 {
     "fce": {
-        "inc": "/home/alta/CLC/LNRC/exams/FCEsplit-public/v3/fce-public.test.inc",
-        "corr": "/home/alta/CLC/LNRC/exams/FCEsplit-public/v3/fce-public.test.corr"
-    },
-
-    "fce-train": {
-        "inc": "/home/alta/CLC/LNRC/exams/FCEsplit-public/v3/fce-public.train16.inc",
-        "corr": "/home/alta/CLC/LNRC/exams/FCEsplit-public/v3/fce-public.train16.corr"
+        "inc": "/home/vr313/rds/hpc-work/Projects/GEC/data/FCE/fce-public.test.inc",
+        "corr": "/home/vr313/rds/hpc-work/Projects/GEC/data/FCE/fce-public.test.corr"
     },
 
     "conll": {
-        "inc": "/home/alta/BLTSpeaking/exp-vr313/GEC/data/CoNLL-14/conll14st-test-data/noalt/input_sentences.txt"
+        "inc": "/home/vr313/rds/hpc-work/Projects/GEC/data/conll/input_sentences.txt"
     },
 
     "bea": {
-        "inc": "/home/alta/BLTSpeaking/exp-vr313/GEC/data/BEA2019/bea2019test.txt"
+        "inc": "/home/vr313/rds/hpc-work/Projects/GEC/data/BEA/bea2019test.txt"
     }
 }
