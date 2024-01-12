@@ -24,6 +24,7 @@ class HFModel:
         outputs = []
         for prompt in tqdm(prompts):
             outputs.append(self.predict(prompt))
+            breakpoint()
         return outputs
 
     def predict(self, prompt):
