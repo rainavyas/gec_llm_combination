@@ -33,14 +33,19 @@ class SelectionLLMCombiner(BaseLLMCombiner):
         prompts = [self._prompt(s, ps) for s,ps in zip(source_sentences, preds)]
         return prompts
     
-    def _prompt(self, source, preds):
+    def _prompt(self, source, preds, remove_ids_in_prompt=True):
+        if remove_ids_in_prompt:
+            source = ' '.join(source.split(' ')[1:])
         out = (
-            "Select an output sentence option that is the best for grammatical error correction "
-            "of an input sentence. Select only one output sentence option from {1,2,3} and return only the option number in tags <option>{1/2/3}</option>.\n"
+            "Select the best output sentence option for grammatical error correction "
+            "of the given input sentence. Select only one output sentence option from {1,2,3} and return only the option number in the following format <option>{1/2/3}</option>.\n"
             f"Input: {source}\n"
         )
         for i, pred in enumerate(preds):
-            out += f"<option {i+1}: {pred}\n"
+            if remove_ids_in_prompt:
+                pred = ' '.join(pred.split(' ')[1:])
+            out += f"option {i+1}: {pred}\n"
         out += f"\n\n"
+        out += 'Make sure you return the selected option number in the format <option>{1/2/3}</option> and give no explanation.'
         return out
 
