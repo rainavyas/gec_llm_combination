@@ -19,6 +19,6 @@ def combination_selector(args):
         combination = args.combination
         if 'selection' in combination:
             comb_model_name = '-'.join(combination.split('-')[2:])
-            return SelectionLLMCombiner(source_sentences, pred_texts, comb_model_name=comb_model_name)
+            return SelectionLLMCombiner(source_sentences, pred_texts, comb_model_name=comb_model_name, gpu_id=args.gpu_id)
 
     

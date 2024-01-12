@@ -5,8 +5,8 @@ from abc import ABC, abstractmethod
 from .select_llm_base_model import get_model
 
 class BaseLLMCombiner(ABC):
-    def __init__(self, source_sentences, pred_texts, comb_model_name='mistral-7b'):
-        self.comb_model = get_model(comb_model_name)
+    def __init__(self, source_sentences, pred_texts, comb_model_name='mistral-7b', gpu_id=0):
+        self.comb_model = get_model(comb_model_name, gpu_id=gpu_id)
         self.combined_texts = self._make_all_changes(source_sentences, pred_texts)
     
     
