@@ -24,7 +24,7 @@ class HFModel:
         outputs = []
         for prompt in tqdm(prompts):
             outputs.append(self.predict(prompt))
-            if len(outputs)==20:
+            if len(outputs)==5:
                 breakpoint()
         return outputs
 
