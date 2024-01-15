@@ -29,12 +29,16 @@ class SelectionLLMCombiner(BaseLLMCombiner):
         preds = list(zip(*pred_texts)) # outer iter over samples not models
         prompts = self._prep_prompts(source_sentences, preds)
         selections = self.comb_model.predict_all(prompts)
-        
+
         # extract selected option
         predictions = []
         for sel, ps in zip(selections, preds):
-            result = re.search('<option>(.*)</option>', sel)
-            num = int(result.group(1)) - 1
+            try:
+                result = re.search('<option>(.*)</option>', sel)
+                num = int(result.group(1)) - 1
+            except:
+                num = 0
+                print('Output format failed for LLM')
             predictions.append(ps[num])
         return predictions
 
