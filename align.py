@@ -19,22 +19,28 @@ TEXT2
 .
 .
 
+
+Also normalizes the input, prediction and correction texts to be consistent in tokenization
 '''
 
 import sys
 import os
 import argparse
-import string
+from tqdm import tqdm
 
-def get_sentences_dict(data_path):
+from src.tools.tools import spacy_normalize_text
+
+def get_sentences_dict(data_path, normalize=True):
     with open(data_path, 'r') as f:
         lines = f.readlines()
     lines = [l.rstrip('\n') for l in lines]
     id2text = {}
-    for l in lines:
+    for l in tqdm(lines):
         parts = l.split()
         id = parts[0]
         text = ' '.join(parts[1:])
+        if normalize:
+            text = spacy_normalize_text(text)
         id2text[id] = text
     return id2text
 
@@ -70,9 +76,12 @@ if __name__ == "__main__":
         f.write(' '.join(sys.argv)+'\n')
     
     # Get sentences and align
-    inc_id2text = get_sentences_dict(args.INC)
-    pred_id2text = get_sentences_dict(args.PRED)
-    corr_id2text = get_sentences_dict(args.CORR)
+    normalize=True
+    if 'conll' in args.INC:
+        normalize=False
+    inc_id2text = get_sentences_dict(args.INC, normalize=normalize)
+    pred_id2text = get_sentences_dict(args.PRED, normalize=normalize)
+    corr_id2text = get_sentences_dict(args.CORR, normalize=normalize)
     inc_sens, pred_sens, corr_sens = align_data(inc_id2text, pred_id2text, corr_id2text)
 
     # Save to output files
