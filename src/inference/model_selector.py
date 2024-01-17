@@ -1,6 +1,6 @@
-from src.inference.gector import GectorModel
 from src.inference.ensemble import MaxvoteEnsModel, MBREnsModel
-
+from .hf_gec import HFGECModel
+from src.tools.tools import get_default_device
 
 MODEL_PATHS = {
     'gector-roberta' : '/scratches/dialfs/alta/vr313/GEC/spoken-gec-combination/experiments/trained_models/roberta_1_gectorv2.th',
@@ -25,8 +25,13 @@ def select_model(args):
             return MaxvoteEnsModel(models)
 
 def _select_single_model(args):
-    mname = args.model_name
-    model_path = MODEL_PATHS[mname]
-    if 'gector' in mname:
+    if 'gector' in args.model_name:
+        mname = args.model_name
+        model_path = MODEL_PATHS[mname]
+        from src.inference.gector import GectorModel
         transformer_model = mname.split('-')[-1]
         return GectorModel(args, transformer_model=transformer_model, model_path=model_path)
+    else:
+        device=get_default_device()
+        return HFGECModel(device, model_name=args.model_name)
+    
