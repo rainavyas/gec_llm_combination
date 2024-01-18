@@ -2,16 +2,21 @@ import torch
 import torch.nn.functional as F
 import sys
 import pandas
+import openai
 import argparse
 import os
 import json
 import zhconv
 import random
+import time
 
 from types import SimpleNamespace
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from typing import List
 from general import check_output_path, save_script_args, check_output_dir, LANG_CODE
+
+openai.organization = "org-DlbzLzT5CDhoGm9GuaIkleGI"
+openai.api_key = "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"
 
 LLAMA_MAX_LEN = 3800
 
@@ -28,6 +33,7 @@ prompt_list = {
     'p2': "Please translate the following text from {} into English: {}. Do not add any explanation.",
     'p3': "Please translate the following text from {} into English: {}\n\nDo not add any explanation.",
     'r3': "Please translate the following text from {} into English: {}\n\nDo not add any explanation.",
+    'c4': "For a given {} utterance, the transcription produced by a speech recognition system is: {}\n\nThe output from an end-to-end speech translation system for the same utterance is: {}\n\nBoth sentences might have errors made by the system. Consider the phonetic similarity to the speech recognition result and the semantic meaning in the speech translation. Generate a corrected speech recognition result in {} and an improved English translation, providing them in XML tags of <transription> </transcription> and <translation> </translation> in two lines without explanations. For the corrected ASR result, try to be as close as possible to the original ASR output."
 }
 
 
@@ -47,6 +53,25 @@ def load_sents(path):
             sent['ref'] = tokens
             sents.append(sent)
     return sents
+
+
+class GPTInterface:
+    def __init__(self, system):
+        self.llm_model = system
+
+    def text_response(self, input_text):
+        # ChatGPT
+        response = openai.ChatCompletion.create(
+            model=self.llm_model,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": input_text},
+            ],
+            temperature=0.0, # 0.0 = deterministic
+            max_tokens=1000, # max_tokens is the generated one,
+        )
+        gen_text = response.choices[0].message.content
+        return gen_text
 
 
 class Llm2Interface:
@@ -101,7 +126,7 @@ def add_arguments(parser):
     return parser
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser = add_arguments(parser)
     args = parser.parse_args()
@@ -111,7 +136,13 @@ if __name__ == '__main__':
     out_dir = f"st_exp/{args.llm_model}/{args.pid}/{args.output_dir}"
     check_output_dir(out_dir)
 
-    llama2 = Llm2Interface(system=args.llm_model)
+    if 'gpt' in args.llm_model:
+        if args.llm_model == 'gpt-3.5':
+            args.llm_model = 'gpt-3.5-turbo-1106'
+        llm = GPTInterface(system=args.llm_model)
+    else:
+        llm = Llm2Interface(system=args.llm_model)
+
     prompt = prompt_list[args.pid]
     if not args.input_file:
         args.input_file = f'exp/baseline/large/covost/transcribe/False_{args.lang}_beam5_stampFalse_nonorm'
@@ -133,10 +164,20 @@ if __name__ == '__main__':
             input = prompt.format(LANG_CODE[args.lang], sent['ref'].strip())
 
         print(input)
-        output = llama2.text_response(input)
+        output = llm.text_response(input)
 
         with open(out_file, 'w', encoding='utf8') as file:
             json_data = {}
             json_data['input'] = input
             json_data['output'] = output
             json.dump(json_data, file, ensure_ascii=False, indent=2)
+
+
+if __name__ == "__main__":
+    for counter in range(1, 100):
+        try:
+            main()
+        except (openai.error.RateLimitError, openai.error.ServiceUnavailableError, openai.error.APIError):
+            print("openai.error.RateLimitError... #{}".format(counter))
+            print("restart in 5 seconds")
+            time.sleep(5)
