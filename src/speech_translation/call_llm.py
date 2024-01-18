@@ -15,9 +15,6 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from typing import List
 from general import check_output_path, save_script_args, check_output_dir, LANG_CODE
 
-openai.organization = "org-DlbzLzT5CDhoGm9GuaIkleGI"
-openai.api_key = "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"
-
 LLAMA_MAX_LEN = 3800
 
 MODEL_URLS = {
@@ -146,7 +143,9 @@ def main():
     prompt = prompt_list[args.pid]
     if not args.input_file:
         args.input_file = f'exp/baseline/large/covost/transcribe/False_{args.lang}_beam5_stampFalse_nonorm'
+        args.trans_file = f'exp/baseline/large/covost/translate/False_{args.lang}_beam5_stampFalse_nonorm'
     sents = load_sents(args.input_file)
+    
     if args.debug:
         sents = sents[:3]
     if args.shuffle:
@@ -162,6 +161,8 @@ def main():
             input = prompt.format(LANG_CODE[args.lang], sent['hyp'].strip())
         elif args.pid == 'r3':
             input = prompt.format(LANG_CODE[args.lang], sent['ref'].strip())
+        elif args.pid == 'c4':
+            input = prompt.format(LANG_CODE[args.lang], sent['hyp'].strip())
 
         print(input)
         output = llm.text_response(input)
