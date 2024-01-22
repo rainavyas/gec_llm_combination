@@ -32,7 +32,18 @@ class SpokenLLMCombiner():
             predictions.append(result)
         return predictions
 
+    def _prep_prompts(self, preds):
+        prompts = [self._prompt(ps) for ps in preds]
+        return prompts
+
     def _prompt(self, preds, remove_ids_in_prompt=True):
+
+        if remove_ids_in_prompt:
+            new_preds = []
+            for pred in preds:
+                new_preds.append(' '.join(pred.split(' ')[1:]))
+        else:
+            new_preds = preds
 
         if self.template == 0:
             # zero-shot
@@ -40,9 +51,9 @@ class SpokenLLMCombiner():
                 "You have to help with spoken grammatical error correction."
                 "You will be given three text views of the spoken audio: disfluent transcription <dsf>, fluent transcription <flt> and the grammatical error correction prediction <gec>.\n"
                 "Consider the different views and then combine them to give the grammatically corrected output sentence in the tags <output>corrected sentence</output>.\n\n"
-                f"<dsf>{preds[0]}</dsf>\n"
-                f"<flt>{preds[1]}</flt>\n"
-                f"<gec>{preds[2]}</gec>\n\n"
+                f"<dsf>{new_preds[0]}</dsf>\n"
+                f"<flt>{new_preds[1]}</flt>\n"
+                f"<gec>{new_preds[2]}</gec>\n\n"
                 "Make sure to return the combined grammatically corrected ouput sentence in the tags <output>corrected sentence</output>.\n"
                 )
         return out

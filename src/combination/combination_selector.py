@@ -12,6 +12,8 @@ def combination_selector(args):
         pred_texts.append(read_lines(pred_path))
     
     if args.spoken:
+        combination = args.combination
+        comb_model_name = '-'.join(combination.split('-')[2:])
         return SpokenLLMCombiner(pred_texts, comb_model_name=comb_model_name, gpu_id=args.gpu_id, template=args.template)
     else:
         source_sentences = read_lines(args.input_file)
