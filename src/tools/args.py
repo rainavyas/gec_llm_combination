@@ -58,22 +58,14 @@ def core_args():
 
 def combined_args():
     parser = argparse.ArgumentParser(allow_abbrev=False)
-    parser.add_argument('--combination', type=str, choices=['mbr', 'maxvote', 'llm-selection-mistral-7b', 'llm-selection-llama-7b', 'rand'], default='mbr', help='method of combination.')
-    parser.add_argument('--pred_files', type=str, required=True, nargs='+', help='path to outputs with predicted sequences')
-    parser.add_argument('--input_file', type=str, required=True, help='path to input file with source incorrect sequences')
+    parser.add_argument('--combination', type=str, choices=['mbr', 'maxvote', 'llm-selection-mistral-7b', 'llm-selection-llama-7b', 'rand', 'llm-combination-mistral-7b'], default='mbr', help='method of combination.')
+    parser.add_argument('--pred_files', type=str, required=True, nargs='+', help='path to outputs with predicted sequences. If spoken, pass files in order: disfluent, fluent, gec')
+    parser.add_argument('--input_file', type=str, default='no-file', help='path to input file with source incorrect sequences')
     parser.add_argument('--outfile', type=str, required=True, help='path to save final predictions after combination')
     parser.add_argument('--votes', type=int, default=2, help='number of model votes to accept an edit for max voting combination')
     parser.add_argument('--gpu_id', type=int, default=0, help='select specific gpu')
+    parser.add_argument('--template', type=int, default=2, help='prompt template for combination')
+    parser.add_argument('--spoken', action='store_true', help='Perform spoken GEC combination')
     return parser.parse_known_args()
 
-def attack_args():
-    parser = argparse.ArgumentParser(allow_abbrev=False)
-    parser.add_argument('--eval', action='store_true', help='Evaluate the next word')
-    parser.add_argument('--eval_attack_phrase', default='do not use', type=str, help='Attack Phrase to evaluate')
-    parser.add_argument('--prev_phrase', default='', type=str, help='previously learnt adv phrase for greedy approach - can be used at evaluation time to find next attack word')
-    parser.add_argument('--array_job_id', type=int, default=-1, help='-1 means not to run as an array job')
-    parser.add_argument('--array_word_size', type=int, default=100, help='number of words to test for each array job in greedy attack')
-    parser.add_argument('--train_data_name', help='Dataset name for learning attack phrase', default='fce-train')
-    parser.add_argument('--base_path', type=str, default='experiments/train_attack/fce-train/gector', help='where to cache attack training results')
-    return parser.parse_known_args()
     

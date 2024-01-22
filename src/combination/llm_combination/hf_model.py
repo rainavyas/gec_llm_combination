@@ -5,6 +5,8 @@ from tqdm import tqdm
 
 HF_MODEL_URLS = {
     "mistral-7b": "mistralai/Mistral-7B-Instruct-v0.1",
+    "mistral2-7b": "mistralai/Mistral-7B-Instruct-v0.2",
+    "mixtral": "mistralai/Mixtral-8x7B-v0.1",
     "llama-7b": "meta-llama/Llama-2-7b-chat-hf",
 }
 
@@ -24,7 +26,7 @@ class HFModel:
         outputs = []
         for prompt in tqdm(prompts):
             outputs.append(self.predict(prompt))
-            # if len(outputs)==5:
+            # if len(outputs)%5 == 0:
             #     breakpoint()
         return outputs
 

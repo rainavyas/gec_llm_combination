@@ -1,13 +1,14 @@
 from src.combination.llm_combination.hf_model import HFModel
-from src.tools.tools import spacy_normalize_text
+from src.tools.tools import normalize_text
 
 from tqdm import tqdm
 import re
 
 class HFGECModel:
-    def __init__(self, device, model_name="mistral-7b"):
+    def __init__(self, device, model_name="mistral-7b", data_name='conll'):
         self.model = HFModel(device, model_name=model_name)
-    
+        self.data_name = data_name
+
     def predict(self, data, has_id=True):
         '''
             has_id=True assumes the data is in the form:
@@ -33,8 +34,8 @@ class HFGECModel:
             else:
                 result = result.group(1)
             
-            # normalize to have space before punctuation
-            result = spacy_normalize_text(result)
+            # apply tokenization as per relevant dataset
+            result = normalize_text(result, data_name=self.data_name)
             predictions.append(result)
             # breakpoint()
 

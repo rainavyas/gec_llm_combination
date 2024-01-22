@@ -1,6 +1,7 @@
 import torch
 import random
 import spacy 
+from nltk.tokenize import word_tokenize
 
 def set_seeds(seed):
     torch.manual_seed(seed)
@@ -14,15 +15,14 @@ def get_default_device(gpu_id=0):
         print("No CUDA found")
         return torch.device('cpu')
 
-def normalize_text(text):
+def normalize_text(text, data_name='conll'):
     '''
-    Add space before punctuation
+    Tokenization to be consistent with input for GEC evaluation
     '''
-    puncts = [".", ",", "?", ")", "'s"]
-    for p in puncts:
-        text = text.replace(p, ' '+p)
-    text = text.replace("(", ' '+"(")
-    return text
+    if data_name == 'conll':
+        return nltk_normalize_text(text)
+    elif data_name == 'fce' or data_name == 'bea':
+        return spacy_normalize_text(text)
 
 NLP = spacy.load("en_core_web_sm")
 def spacy_normalize_text(text):
@@ -31,3 +31,20 @@ def spacy_normalize_text(text):
     '''
     doc = NLP(text)
     return ' '.join([t.text for t in doc])
+
+def nltk_normalize_text(text):
+    return ' '.join(word_tokenize(text))
+
+
+def spoken_gec_normalize_text(text):
+    '''
+    Lower case everything and remove all punctuation
+    apply spacy tokenization
+    '''
+    punc = '''!:;\,./?'''
+    res = ""
+    text = text.lower()
+    for ele in text:
+        if ele not in punc:
+            res+=ele
+    return spacy_normalize_text(res) 
