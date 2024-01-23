@@ -33,5 +33,5 @@ def _select_single_model(args):
         return GectorModel(args, transformer_model=transformer_model, model_path=model_path)
     else:
         device=get_default_device()
-        return HFGECModel(device, model_name=args.model_name)
+        return HFGECModel(device, model_name=args.model_name, data_name=args.data_name)
     

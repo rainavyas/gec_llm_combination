@@ -28,9 +28,9 @@ import os
 import argparse
 from tqdm import tqdm
 
-from src.tools.tools import spacy_normalize_text
+from src.tools.tools import spacy_normalize_text, spoken_gec_normalize_text
 
-def get_sentences_dict(data_path, normalize=True):
+def get_sentences_dict(data_path, normalize=False, s_norm=False):
     with open(data_path, 'r') as f:
         lines = f.readlines()
     lines = [l.rstrip('\n') for l in lines]
@@ -41,6 +41,8 @@ def get_sentences_dict(data_path, normalize=True):
         text = ' '.join(parts[1:])
         if normalize:
             text = spacy_normalize_text(text)
+        if s_norm:
+            text = spoken_gec_normalize_text(text)
         id2text[id] = text
     return id2text
 
@@ -76,12 +78,15 @@ if __name__ == "__main__":
         f.write(' '.join(sys.argv)+'\n')
     
     # Get sentences and align
-    normalize=True
-    if 'conll' in args.INC:
-        normalize=False
-    inc_id2text = get_sentences_dict(args.INC, normalize=normalize)
-    pred_id2text = get_sentences_dict(args.PRED, normalize=normalize)
-    corr_id2text = get_sentences_dict(args.CORR, normalize=normalize)
+    normalize=False
+    if 'fce' in args.INC:
+        normalize=True
+    s_norm = False
+    if 'spoken' in args.INC:
+        s_norm = True
+    inc_id2text = get_sentences_dict(args.INC, normalize=normalize, s_norm=s_norm)
+    pred_id2text = get_sentences_dict(args.PRED, normalize=normalize, s_norm=s_norm)
+    corr_id2text = get_sentences_dict(args.CORR, normalize=normalize, s_norm=s_norm)
     inc_sens, pred_sens, corr_sens = align_data(inc_id2text, pred_id2text, corr_id2text)
 
     # Save to output files
