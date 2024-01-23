@@ -20,7 +20,7 @@ class SpokenLLMCombiner():
 
         # extract relevant part of output
         predictions = []
-        for mpred, ps, s in zip(model_preds, preds):
+        for mpred, ps in zip(model_preds, preds):
             data_id = ps[0].split(' ')[0]
             result = re.search('<output>(.*)</output>', mpred)
             if result is None:
