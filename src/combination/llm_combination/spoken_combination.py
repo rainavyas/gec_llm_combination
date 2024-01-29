@@ -46,7 +46,7 @@ class SpokenLLMCombiner():
             new_preds = preds
 
         if self.template == 0:
-            # zero-shot
+            # zero-shot: dsf, flt, wh_gec
             out = (
                 "You have to help with spoken grammatical error correction."
                 "You will be given three text views of the spoken audio: disfluent transcription <dsf>, fluent transcription <flt> and the grammatical error correction prediction <gec>.\n"
@@ -54,6 +54,88 @@ class SpokenLLMCombiner():
                 f"<dsf>{new_preds[0]}</dsf>\n"
                 f"<flt>{new_preds[1]}</flt>\n"
                 f"<gec>{new_preds[2]}</gec>\n\n"
+                "Make sure to return the combined grammatically corrected ouput sentence in the tags <output>corrected sentence</output>.\n"
+                )
+
+        if self.template == 1:
+            # zero-shot no punctuation
+            out = (
+                "You have to help with spoken grammatical error correction."
+                "You will be given three text views of the spoken audio: disfluent transcription <dsf>, fluent transcription <flt> and the grammatical error correction prediction <gec>.\n"
+                "Consider the different views and then combine them to give the grammatically corrected output sentence in the tags <output>corrected sentence</output>.\n"
+                "Do not make punctuation or capitalization corrections, but make other grammatical corrections.\n\n"
+                f"<dsf>{new_preds[0]}</dsf>\n"
+                f"<flt>{new_preds[1]}</flt>\n"
+                f"<gec>{new_preds[2]}</gec>\n\n"
+                "Make sure to return the combined grammatically corrected ouput sentence in the tags <output>corrected sentence</output>.\n"
+                )
+
+        if self.template == 2:
+            # zero-shot no punctuation and only fluent
+            out = (
+                "You have to help with spoken grammatical error correction."
+                "You will be given the fluent transcription <flt>.\n"
+                "Give the grammatically corrected output sentence in the tags <output>corrected sentence</output>.\n"
+                "Do not make punctuation or capitalization corrections, but make other grammatical corrections.\n\n"
+                f"<flt>{new_preds[1]}</flt>\n\n"
+                "Make sure to return the final grammatically corrected ouput sentence in the tags <output>corrected sentence</output>.\n"
+                )
+
+        if self.template == 3:
+            # zero-shot no punctuation and only wh-gec
+            out = (
+                "You have to help with spoken grammatical error correction."
+                "You will be given the grammatically corrected transcription <gec>.\n"
+                "Consider this transcription and then correct any remaining grammatical errors. Give the grammatically corrected output sentence in the tags <output>corrected sentence</output>.\n"
+                "Do not make punctuation or capitalization corrections, but make other grammatical corrections.\n\n"
+                f"<gec>{new_preds[2]}</gec>\n\n"
+                "Make sure to return the final grammatically corrected ouput sentence in the tags <output>corrected sentence</output>.\n"
+                )
+
+        if self.template == 4:
+            # zero-shot no punctuation and only dsf
+            out = (
+                "You have to help with spoken grammatical error correction."
+                "You will be given the disfluent transcription <dsf>.\n"
+                "Give the grammatically corrected output sentence in the tags <output>corrected sentence</output>.\n"
+                "Do not make punctuation or capitalization corrections, but make other grammatical corrections.\n\n"
+                f"<dsf>{new_preds[0]}</dsf>\n\n"
+                "Make sure to return the final grammatically corrected ouput sentence in the tags <output>corrected sentence</output>.\n"
+                )
+
+        if self.template == 5:
+            # zero-shot no punctuation and only flt and wh-gec
+            out = (
+                "You have to help with spoken grammatical error correction."
+                "You will be given two text views of the spoken audio: fluent transcription <flt> and the grammatical error correction prediction <gec>.\n"
+                "Consider the different views and then combine them to give the grammatically corrected output sentence in the tags <output>corrected sentence</output>.\n"
+                "Do not make punctuation or capitalization corrections, but make other grammatical corrections.\n\n"
+                f"<flt>{new_preds[1]}</flt>\n"
+                f"<gec>{new_preds[2]}</gec>\n\n"
+                "Make sure to return the combined grammatically corrected ouput sentence in the tags <output>corrected sentence</output>.\n"
+                )
+
+        if self.template == 6:
+            # zero-shot no punctuation and only dsf and wh-gec
+            out = (
+                "You have to help with spoken grammatical error correction."
+                "You will be given two text views of the spoken audio: disfluent transcription <dsf> and the grammatical error correction prediction <gec>.\n"
+                "Consider the different views and then combine them to give the grammatically corrected output sentence in the tags <output>corrected sentence</output>.\n"
+                "Do not make punctuation or capitalization corrections, but make other grammatical corrections.\n\n"
+                f"<dsf>{new_preds[0]}</dsf>\n"
+                f"<gec>{new_preds[2]}</gec>\n\n"
+                "Make sure to return the combined grammatically corrected ouput sentence in the tags <output>corrected sentence</output>.\n"
+                )
+
+        if self.template == 7:
+            # zero-shot no punctuation and only dsf and flt
+            out = (
+                "You have to help with spoken grammatical error correction."
+                "You will be given two text views of the spoken audio: disfluent transcription <dsf> and fluent transcription <flt>.\n"
+                "Consider the different views and then combine them to give the grammatically corrected output sentence in the tags <output>corrected sentence</output>.\n"
+                "Do not make punctuation or capitalization corrections, but make other grammatical corrections.\n\n"
+                f"<dsf>{new_preds[0]}</dsf>\n"
+                f"<flt>{new_preds[1]}</flt>\n\n"
                 "Make sure to return the combined grammatically corrected ouput sentence in the tags <output>corrected sentence</output>.\n"
                 )
         return out

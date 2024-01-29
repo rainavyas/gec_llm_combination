@@ -58,13 +58,13 @@ def core_args():
 
 def combined_args():
     parser = argparse.ArgumentParser(allow_abbrev=False)
-    parser.add_argument('--combination', type=str, choices=['mbr', 'maxvote', 'llm-selection-mistral-7b', 'llm-selection-llama-7b', 'rand', 'llm-combination-mistral-7b'], default='mbr', help='method of combination.')
+    parser.add_argument('--combination', type=str, choices=['mbr', 'maxvote', 'llm-selection-mistral-7b', 'llm-selection-llama-7b', 'rand', 'llm-combination-mistral-7b', 'llm-combination-gpt4'], default='mbr', help='method of combination.')
     parser.add_argument('--pred_files', type=str, required=True, nargs='+', help='path to outputs with predicted sequences. If spoken, pass files in order: disfluent, fluent, gec')
     parser.add_argument('--input_file', type=str, default='no-file', help='path to input file with source incorrect sequences')
     parser.add_argument('--outfile', type=str, required=True, help='path to save final predictions after combination')
     parser.add_argument('--votes', type=int, default=2, help='number of model votes to accept an edit for max voting combination')
     parser.add_argument('--gpu_id', type=int, default=0, help='select specific gpu')
-    parser.add_argument('--template', type=int, default=2, help='prompt template for combination')
+    parser.add_argument('--template', type=int, default=0, help='prompt template for combination')
     parser.add_argument('--spoken', action='store_true', help='Perform spoken GEC combination')
     return parser.parse_known_args()
 
