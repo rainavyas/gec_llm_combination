@@ -26,6 +26,7 @@
     Credit:
         The need for spoken GEC evaluation was raised by **Thomas Hardman**.
         This script is based on his code for spoken GEC evaluation.
+        The code has been enhanced to offer a more granular breakdown by edit-type with the flag --split_edit_type
 '''
 
 import errant
@@ -75,9 +76,6 @@ def errant_spoken(source_asr_stcs_al, pred_stcs_al, target_stcs_al, source_trans
         target_stcs_al - list of aligned reference sentences (c)
         source_trans_stcs_al - list of aligned manually transcribed sentences (a)
     '''
-    # tp = 0
-    # fp = 0
-    # ref_tot = 0
     tp = defaultdict(int)
     fp = defaultdict(int)
     ref_tot = defaultdict(int)
@@ -91,7 +89,6 @@ def errant_spoken(source_asr_stcs_al, pred_stcs_al, target_stcs_al, source_trans
         # update total number of reference edits per edit type
         for ref_edit in ref_edits:
             ref_tot[ref_edit.type] += 1
-        # ref_tot += len(ref_edits)
 
         # find operations to get from transcription to asr
         asr_editops = Levenshtein.opcodes(stc_asr.split(' '), stc_trans.split(' '))
@@ -127,10 +124,6 @@ def errant_spoken(source_asr_stcs_al, pred_stcs_al, target_stcs_al, source_trans
     fn = defaultdict(int, fn)
     return tp, fp, fn
 
-    p = tp/(tp + fp)
-    r = tp/(tp + fn)
-    f_05 = 1.25 * (p * r) / (0.25 * p + r)
-    print(f'TP:\t{tp}\nFP:\t{fp}\nFN:\t{fn}\nP:\t{p}\nR\t{r}\nF0.5:\t{f_05}')
 
 def compute_p_r_f05(tp_val, fp_val, fn_val):
     p = tp_val/(tp_val + fp_val)
